@@ -29,7 +29,7 @@ Then invoke it in your agent: `/tandem` (or say "work with the other AI on this"
 4. **Handoffs** — every handoff is an explicit "@partner: do X, then Y" with specifics. A
    ~1-minute loop (or manual re-invocation) drives the back-and-forth until done.
 
-## Files it uses (in a shared folder)
+## Files it uses (one shared folder, default `docs/tandem/<problem-name>/`)
 
 | File | Purpose |
 | --- | --- |

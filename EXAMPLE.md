@@ -4,12 +4,12 @@ This example shows the expected rhythm, not a required transcript.
 
 ## Setup
 
-The human creates `docs/fix-upload/problem.md` and starts two agents.
+The human creates `docs/tandem/fix-upload/problem.md` and starts two agents.
 
 - Agent 1 name: `Iris`
 - Agent 2 name: `Mika`
-- Shared folder: `docs/fix-upload/`
-- Branch: `feat/fix-upload`
+- Shared folder: `docs/tandem/fix-upload/` (all tracking files live here)
+- Branch: `feat/fix-upload` (all code changes live here, in the repo's normal tree)
 
 ## First mover
 

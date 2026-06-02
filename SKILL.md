@@ -25,10 +25,13 @@ Run these in order. Skip any step already satisfied by existing files.
    you by it. If a `handoff.md` already names the two agents and only one slot is free,
    take the free slot and confirm with the human. If both slots are filled by other names,
    ask the human which identity you should assume before editing.
-2. **Find the problem file.** Look for `problem.md` in the shared folder (default: the
-   `docs/<slug>/` the human points to, else ask where). **If it doesn't exist, STOP and ask
-   the human to provide `problem.md`** — you cannot operate without it. Only after it exists
-   do you create any other file.
+2. **Find the problem file.** The **shared folder** is `docs/tandem/<problem-name>/` (e.g.
+   `docs/tandem/fix-upload/`) — use a short, hyphenated name for the problem; create the folder if
+   it's absent. Honor a different path if the human points to one. Look for `problem.md`
+   there. **If it doesn't exist, STOP and ask the human to provide `problem.md`** — you
+   cannot operate without it. Only after it exists do you create any other file. All tracking
+   files (§4) live in this one folder; **code changes never go here** — they go in the repo's
+   normal source tree on a `feat/<problem-name>` branch (§2).
 3. **Settle coding practices.** Ask the human if there's a coding-practices/context file to
    follow. Resolve in this order: (a) the path the human gives → (b) the shared `docs/`
    folder → (c) repo convention files (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`, `.github`)
@@ -80,7 +83,7 @@ edit it. Treat their `<partnername>.md` the same — read-only.
   hold the lock, don't edit shared code — **ping in `handoff.md` and wait**. (Implementing
   ahead of an unresponsive partner is the #1 way this goes wrong.)
 
-## 4. The tracking files (shared folder)
+## 4. The tracking files (shared folder = `docs/tandem/<problem-name>/`)
 
 | File | Purpose |
 | --- | --- |
