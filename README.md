@@ -11,7 +11,7 @@ chat context — everything happens through a small set of tracking files.
 ## Install
 
 ```bash
-npx skills add <owner>/<repo>
+npx skills add Ajmaljalal/tandem
 ```
 
 Then invoke it in your agent: `/tandem` (or say "work with the other AI on this").
