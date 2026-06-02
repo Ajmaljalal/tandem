@@ -22,12 +22,14 @@ Then invoke it in your agent: `/tandem` (or say "work with the other AI on this"
    (stops and asks if missing), and settles coding practices (your file → `docs/` →
    `CLAUDE.md`/`AGENTS.md`/`.cursor` → infer from the codebase).
 2. **Orient** — reads `handoff.md` first: first mover starts and hands off; a joiner
-   announces itself so the partner can coordinate.
+   announces itself so the partner can coordinate. Reopened sessions normalize stale live
+   tables before any code work.
 3. **Work in order** — understand & *agree* on the problem against the real code → write the
    **solution** together → then the **plan** → then **build** (prefer **one branch**) → mutual
    sign-off.
 4. **Handoffs** — every handoff is an explicit "@partner: do X, then Y" with specifics. A
-   ~1-minute loop (or manual re-invocation) drives the back-and-forth until done.
+   watcher is created or verified as the first operational priority, runs at exactly
+   1-minute cadence, and stays active until the tandem task is completely done.
 
 ## Files it uses (one shared folder, default `docs/tandem/<problem-name>/`)
 
@@ -47,7 +49,8 @@ Copy-paste stubs are in [`templates/`](templates/); a worked two-agent walkthrou
 
 Hard-won rules are baked in: don't implement ahead of your partner's acknowledgment; only the
 tree-lock holder has uncommitted changes; never `git add -A`; independently verify the
-partner's claims; small committed slices; idle and stop cleanly.
+partner's claims; small committed slices; keep live handoff tables current; idle and stop
+cleanly only after final sign-off.
 
 ## License
 
