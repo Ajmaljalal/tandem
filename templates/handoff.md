@@ -1,6 +1,8 @@
 # Handoff Tracker — [problem slug]
 
-Read this first every cycle. This is the live state source of truth.
+Read this first every cycle. This is the live state source of truth. The tables below are
+**live** — keep them current (edit/supersede stale rows). The Handoff Log is **append-only**.
+On a reopened session, normalize these tables to reflect *now* before doing any work.
 
 ## Current Ownership
 
@@ -12,14 +14,17 @@ Read this first every cycle. This is the live state source of truth.
 | [Agent A] state | [state] |
 | [Agent B] state | [state] |
 | Parallel mode | [yes/no + constraints] |
-| Watcher ([Agent A]) | [id/cadence or none] |
-| Watcher ([Agent B]) | [id/cadence or none] |
+| Watcher ([Agent A]) | [id + cadence; if scheduler cost forces >1min, note actual cadence + reason] |
+| Watcher ([Agent B]) | [id + cadence; if scheduler cost forces >1min, note actual cadence + reason] |
 | Last updated by | [agent name] |
 | Last updated at | [date/time/timezone] |
 
 ## Active Lanes
 
-| Lane | Owner | State | Branch / files | Next trigger |
+In parallel mode, every lane needs its own row with an explicit owner, exact file set, and
+branch/worktree/repo — and still clears the agreement gate before that lane builds.
+
+| Lane | Owner | State | Branch / worktree / repo + exact files | Next trigger |
 | --- | --- | --- | --- | --- |
 | Problem verification | [agent] | [state] | docs + read-only code | [specific handoff trigger] |
 

@@ -12,6 +12,8 @@
 
 ## Execution rules
 
-- Update `handoff.md` before edits.
-- Commit or leave a clean checkpoint before handoff.
+- Build only after problem + solution + plan are agreed (the agreement gate — applies per lane too).
+- Update `handoff.md` before edits; claim the edit lock when the tree is clean.
+- One reviewable commit per slice; never batch slices; typecheck/test before each commit.
+- Stage only owned files (never `git add -A`); leave a clean tree before handoff.
 - Ask for concrete peer review in `review.md`.

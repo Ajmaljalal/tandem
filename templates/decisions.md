@@ -1,6 +1,6 @@
 # Decisions — [problem slug]
 
-## D1 — Coding practices
+## D1 — Coding practices (required before any implementation)
 
 - **Decision:** [what files/conventions govern the work]
 - **Rationale:** [why]
@@ -9,8 +9,8 @@
 
 ## D2 — Branch strategy
 
-- **Decision:** [one branch / separate branches / worktrees]
-- **Rationale:** [why]
+- **Decision:** [one branch (default) / separate branches / worktrees / multi-repo / parallel lanes]
+- **Rationale:** [why — if not one branch, what real conflict justifies the split]
 - **Agreed by:** [Agent A], [Agent B]
 - **Date:** [date]
 
