@@ -14,8 +14,8 @@ On a reopened session, normalize these tables to reflect *now* before doing any 
 | [Agent A] state | [state] |
 | [Agent B] state | [state] |
 | Parallel mode | [yes/no + constraints] |
-| Watcher ([Agent A]) | [id + cadence; if scheduler cost forces >1min, note actual cadence + reason] |
-| Watcher ([Agent B]) | [id + cadence; if scheduler cost forces >1min, note actual cadence + reason] |
+| Watcher ([Agent A]) | [id + 1-minute cadence + ACTIVE until complete; if impossible, stop and ask human] |
+| Watcher ([Agent B]) | [id + 1-minute cadence + ACTIVE until complete; if impossible, stop and ask human] |
 | Last updated by | [agent name] |
 | Last updated at | [date/time/timezone] |
 

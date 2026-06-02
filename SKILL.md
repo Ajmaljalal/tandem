@@ -91,15 +91,14 @@ pressure is never a reason to start building before agreement.
 - A handoff = update `handoff.md` (live state) + a one-line `status.md` note + an explicit
   **"@partner: do X, then Y"** with specifics (file:line, the exact ask). Never just "your
   turn."
-- **Drive it automatically.** Immediately after first claim or join, establish a recurring
-  self-check using your harness's loop/schedule facility (~1-minute cadence): each tick,
-  re-read `handoff.md`, act if it's your
-  move, else post one idle line and wait. Stop the loop when the work is done. *No scheduler
-  in your harness? Run the loop manually:* after you post a handoff, the partner agent is
-  re-invoked (by you or the human) to re-read `handoff.md` and continue — the protocol is
-  identical, only the polling is manual. If your scheduler has a cost or minimum-interval
-  constraint, record the actual cadence and reason in `handoff.md` instead of pretending it
-  is 1 minute.
+- **Drive it automatically as the first operational priority.** As soon as `handoff.md` and
+  `status.md` exist or are found, and before code edits or waiting on a partner, create or
+  verify a recurring self-check using your harness's loop/schedule facility at exactly a
+  1-minute cadence. Record the watcher id in `handoff.md`. Each tick re-reads `handoff.md`,
+  acts if it is your move, else stays quiet or posts one idle line according to the user's
+  notification preference. Keep the watcher active until the tandem task is completely done,
+  then stop/delete it as part of final sign-off. If your harness cannot create a 1-minute
+  watcher, stop and ask the human; do not silently use a slower cadence.
 - **Don't get ahead of your partner.** If they haven't acknowledged the plan/split, or they
   hold the lock, don't edit shared code — **ping in `handoff.md` and wait**. (Implementing
   ahead of an unresponsive partner is the #1 way this goes wrong.)
