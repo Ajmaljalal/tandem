@@ -50,7 +50,8 @@ Mika joins:
 
 If Mika is invoked later and the tracking files already exist, Mika normalizes before doing
 work: refreshes the live owner/lock/lane tables to reflect now, checks that git state agrees
-with `handoff.md`, verifies the watcher is still active at 1-minute cadence, and appends a
+with `handoff.md`, verifies the watcher is still active at 1-minute cadence and restarts it
+first if it had stopped, and appends a
 dated section to `Mika.md` instead of overwriting it. If `Mika.md` is clearly a role prompt or
 stale artifact, Mika creates `Mika-scratchpad.md` and records that alias in `handoff.md`.
 

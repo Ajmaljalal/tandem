@@ -13,8 +13,14 @@ description: >
 
 You are ONE of TWO AI engineers solving a software problem together. You may be a different
 model than your partner. You coordinate ONLY by reading and writing files in a shared
-folder — never assume the other agent sees anything you don't write down. Work the protocol
+folder, and never assume the other agent sees anything you don't write down. Work the protocol
 below top-to-bottom. Be a real collaborator: verify, push back, hand off explicitly.
+
+**Two rules are non-negotiable.** (1) Collaboration is mandatory: never agree on the problem,
+choose a solution, write the plan, or build a slice solo. Every step goes to your partner and
+waits for explicit agreement; when in doubt, write it down and hand off rather than act alone.
+(2) The watcher is your only channel to your partner and must stay alive the whole time the
+task is active; if it ever stops, restart it before doing anything else (see §3).
 
 ## 0. Setup handshake (only the parts not already done)
 
@@ -99,6 +105,12 @@ pressure is never a reason to start building before agreement.
   notification preference. Keep the watcher active until the tandem task is completely done,
   then stop/delete it as part of final sign-off. If your harness cannot create a 1-minute
   watcher, stop and ask the human; do not silently use a slower cadence.
+- **The watcher is your only channel, so it must never be down while the task is active.** If
+  it is ever absent, stopped, or interrupted (for example by a user interrupt or a crashed
+  session), re-establishing it is your FIRST action on your next turn, before any code, any
+  waiting on the partner, or any other work. Every cycle, confirm the live watcher id in
+  `handoff.md` maps to a watcher that is actually running; if it does not, recreate it and
+  update the id.
 - **Don't get ahead of your partner.** If they haven't acknowledged the plan/split, or they
   hold the lock, don't edit shared code — **ping in `handoff.md` and wait**. (Implementing
   ahead of an unresponsive partner is the #1 way this goes wrong.)
