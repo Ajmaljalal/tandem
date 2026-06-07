@@ -38,8 +38,8 @@ Today tandem is built for exactly two agents on one urgent problem at a time.
 npx skills add Ajmaljalal/tandem
 ```
 
-Then invoke it inside your agent with `/tandem` (or say "work with the other AI on this"). Run
-the install once per agent that will take part in the collaboration.
+Then invoke it inside your agent with `/tandem` (or say "work with the other AI on this"). One
+global install is enough; both agents use that same installed skill.
 
 ## How to use it
 
