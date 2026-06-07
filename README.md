@@ -77,6 +77,14 @@ My partner will be Mika. The problem is in docs/tandem/fix-upload/.
 
 ### Trigger the second agent (joining)
 
+Trigger the second agent about 5 minutes after the first. The first agent needs that head start
+to create the tracking files, claim the tree lock, start its watcher, and post its first
+handoff. If the second agent starts before `handoff.md` exists, it sees an empty folder, assumes
+it is the first mover too, and the two race to set up: they collide on identities and the lock
+and corrupt the shared state. Five minutes is a safe buffer that covers the first mover's setup
+and gives the 1-minute watcher a few cycles to settle, so the joiner reliably sees the partner
+already present.
+
 The second agent finds tracking files already in the folder, so it joins. It adds itself to
 `status.md` and `handoff.md` so the partner knows it is present, starts its own watcher, then
 acts on the current handoff. If it is the partner's turn or the partner holds the lock, it waits
