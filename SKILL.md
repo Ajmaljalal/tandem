@@ -3,8 +3,8 @@ name: tandem
 description: >
   Collaborate with a SECOND AI engineer (any LLM) on a software problem, coordinating only
   through shared files — a handoff/status/review tracking system. Two named agents go
-  problem → agree → solution → plan → build (prefer one branch) with explicit, automatic
-  back-and-forth handoffs.
+  problem → agree → solution → plan → build (default one branch; per-repo lanes for multi-repo
+  products) with explicit, automatic back-and-forth handoffs.
   Use when the user says "tandem", "/tandem", "work with the other AI", "collaborate with
   the other engineer", "pair with another agent", "co-build this with another named agent", or sets up
   two AIs on the same problem. Also use when joining a folder that already has a
@@ -16,11 +16,18 @@ model than your partner. You coordinate ONLY by reading and writing files in a s
 folder, and never assume the other agent sees anything you don't write down. Work the protocol
 below top-to-bottom. Be a real collaborator: verify, push back, hand off explicitly.
 
-**Two rules are non-negotiable.** (1) Collaboration is mandatory: never agree on the problem,
-choose a solution, write the plan, or build a slice solo. Every step goes to your partner and
-waits for explicit agreement; when in doubt, write it down and hand off rather than act alone.
-(2) The watcher is your only channel to your partner and must stay alive the whole time the
-task is active; if it ever stops, restart it before doing anything else (see §3).
+**Three rules are non-negotiable.** (1) **Collaboration is mandatory:** never agree on the
+problem, choose a solution, write the plan, or build a slice solo. Every step goes to your
+**partner** and waits for *the partner's* explicit agreement; when in doubt, write it down and
+hand off rather than act alone. (2) **The watcher is your only channel** to your partner and
+must stay alive the whole time the task is active; if it ever stops, restart it before doing
+anything else (see §3). (3) **This is an autonomous two-agent autopilot.** "Agreed" means
+agreed between the two *agents* — never a human checkpoint. Run the whole loop (problem →
+solution → plan → build → review) between the two of you, and once you and your partner agree
+on the problem, solution, and plan, **build it** — never pause to ask the human "we have a
+solution, should we implement it?". Pull the human in only for the two things you genuinely
+cannot settle yourselves (see §2): gathering requirements for a *new feature*, and facts or
+access beyond your reach.
 
 ## 0. Setup handshake (only the parts not already done)
 
@@ -74,23 +81,52 @@ and record that alias in `handoff.md`. Treat partner scratchpads as read-only.
 
 ## 2. The work, in order (don't skip ahead)
 
-**Agreement gate:** do not build before problem, solution, and plan are agreed. This applies
-to the first mover too, and even across separate repos or zero-conflict lanes; implementation
-pressure is never a reason to start building before agreement.
+**Agreement gate — between the two agents, not the human.** Do not build before the problem,
+solution, and plan are agreed *by both agents*. This applies to the first mover too, and even
+across separate repos or zero-conflict lanes. The gate is cleared by your **partner's**
+sign-off, never by waiting for human permission: implementation pressure is never a reason to
+start before your partner agrees, and needing a human "go-ahead" is never a reason to stall
+after they do. Once both agents are agreed, proceed to build automatically.
 
-1. **Understand & AGREE on the problem.** Read `problem.md` deeply, then **inspect the real
-   codebase** to confirm the stated problem is actually a problem. If it isn't, say so with
-   evidence. Independently verify your partner's claims against the code before agreeing —
-   don't rubber-stamp. Record agreement in `decisions.md`.
-2. **Write the SOLUTION together first** (`solution.md`). Trade feedback in `review.md`.
-   Reach explicit agreement before planning.
+1. **Understand & verify the problem, then AGREE on it with your partner.** Read `problem.md`
+   deeply and **inspect the real codebase** to confirm what's being asked is sound:
+   - *Bug:* prove it's actually a bug against the real code/data before agreeing — reproduce it
+     or cite the exact `file:line` that misbehaves. If it isn't a real bug, say so with
+     evidence and stop; don't build a fix for a non-problem.
+   - *New feature / change:* confirm it's coherent with the codebase and makes sense. **This is
+     the one stage where you question the human** — gather the technical requirements you need
+     (what they want, how it should behave, constraints, edge cases) before agreeing on scope.
+     Record the answers in `decisions.md`.
+   Either way, independently verify your partner's claims against the code — don't rubber-stamp.
+   Record problem agreement in `decisions.md`.
+2. **Write the SOLUTION together first** (`solution.md`). Trade feedback in `review.md` and
+   reach explicit agreement *with your partner* before planning — an agent-to-agent agreement,
+   not something to route past the human.
 3. **Then write the PLAN** (`plan.md`) — phased/sliced, with a clear split of who does what.
-4. **Then BUILD.** Prefer **ONE shared branch** off the repo's default branch. Split into
-   two branches, worktrees, repos, or parallel lanes only if a single branch would cause real
-   conflicts / stepping on each other — record that choice in `decisions.md` before code.
-   Implement in small slices: one reviewable commit per slice, never batch multiple slices
-   into one commit, and run typecheck/tests before each slice commit.
-5. **Mutual review & sign-off** in `review.md` before declaring done.
+4. **Then BUILD — automatically, no human go-ahead needed.** Default to **ONE shared branch**
+   off the repo's default branch. For a multi-repo product (e.g. separate `server/` and
+   `client/` repos) or genuinely conflicting work, per-repo / per-lane branches are a
+   sanctioned default — just record the lane split, owner, and exact file set in `decisions.md`
+   before the first edit. Implement in small slices: one reviewable commit per slice, never
+   batch multiple slices into one commit, and run typecheck/tests before each slice commit.
+5. **Mutual review & sign-off** in `review.md` before declaring done. Every slice is reviewed
+   by the partner — an author never self-certifies their own slice as done. Cite `file:line`.
+   When a slice touches **auth, ownership, project/user lookup, or any HTTP guard**, the
+   reviewer explicitly checks owner-scoping and error-code behavior (e.g. a status code that
+   leaks another user's resource state, like a cross-user 409/403).
+6. **Production-readiness reopen (high-risk / production fixes).** For prod-facing or
+   high-blast-radius changes, after the first "done" run one explicit adversarial pass before
+   final sign-off: concurrency/idempotency, ownership/auth scoping, invariant bypasses,
+   error-recovery commands, and analogous state classes the fix didn't touch. Reopening a
+   "complete" branch to harden it is expected, not a failure — log findings as new slices and
+   review them like any other.
+7. **Closeout consistency check (before declaring complete).** Don't declare done until all of
+   these hold, and record the check in `handoff.md`: no Active Lane is still in-progress or
+   "changes requested"; every live row cites the *same* current branch HEAD (no two rows
+   pointing at different commits); each agent's watcher state is accurate and each agent has
+   stopped its own watcher (or logged a pending cleanup for it); and any human follow-ups
+   (deploy, prod recovery, merge) are listed *separately* from the agent work, which is fully
+   finished. Only then post the final mutual sign-off.
 
 ## 3. Handoff discipline
 
@@ -111,9 +147,21 @@ pressure is never a reason to start building before agreement.
   waiting on the partner, or any other work. Every cycle, confirm the live watcher id in
   `handoff.md` maps to a watcher that is actually running; if it does not, recreate it and
   update the id.
-- **Don't get ahead of your partner.** If they haven't acknowledged the plan/split, or they
-  hold the lock, don't edit shared code — **ping in `handoff.md` and wait**. (Implementing
-  ahead of an unresponsive partner is the #1 way this goes wrong.)
+- **Don't get ahead of your partner — but don't idle-spin forever either.** If they haven't
+  acknowledged the plan/split or they hold the lock, don't edit shared code — ping in
+  `handoff.md` and stay productive with **read-only** work (re-verify the problem, pre-read the
+  files your next slice touches, draft your review). Implementing ahead of an unresponsive
+  partner is the #1 way this goes wrong.
+- **Stall escape (so a tandem never silently strands).** If your partner has made no move after
+  a sustained wait (~15 idle ticks, or they never joined at all), post one clear blocked line —
+  "@partner no movement since &lt;time&gt;; @human partner may be absent" — and downgrade your
+  watcher to a slower cadence (keep it alive, don't kill it). A 1-minute watcher must never stay
+  armed for hours against a tandem that has gone idle. Return to 1-minute cadence the moment the
+  partner moves.
+- **Watcher cleanup is per-agent.** At final sign-off each agent stops/deletes **its own**
+  watcher; you usually cannot stop your partner's (different harness / automation manager). If
+  you can't, record an explicit pending line — "@partner stop your watcher `<id>`" — rather than
+  assuming it's gone.
 - In parallel mode, handoffs are per lane: each lane still needs an explicit ask, owner,
   file set, branch/worktree/repo, verification command, and next trigger.
 
@@ -145,14 +193,19 @@ current by editing or superseding stale entries; keep the handoff log append-onl
   capture your partner's in-flight work.
 - **Never edit your partner's lane files** (or their `<name>.md`) without noting it in
   `handoff.md` first.
-- Prefer one branch; never merge — leave finished branches for the human.
-- **Parallel lanes / multi-repo work:** allowed only after `handoff.md` and `decisions.md`
-  record the mode, owner, exact file set, branch/worktree/repo, verification, and handoff
-  trigger for each lane. Separate repos or disjoint files remove tree contention, but they
-  do **not** remove the agreement gate for that lane.
+- Default to one branch; for a multi-repo product, per-repo branches are fine. Never merge —
+  leave finished branches for the human.
+- **Parallel lanes / multi-repo work:** a sanctioned default for separate repos and for
+  genuinely conflicting work — but only after `handoff.md` and `decisions.md` record the mode,
+  owner, exact file set, branch/worktree/repo, verification, and handoff trigger for each lane.
+  Separate repos or disjoint files remove tree contention, but they do **not** remove the
+  agent-to-agent agreement gate for that lane.
 
 ## 6. Mindset
 
 Cross-LLM by design: your partner may reason differently — communicate in writing, verify
-claims, and disagree productively in `review.md`. Small slices over big drops. Idle in one
-line when there's nothing to do; declare done and stop the loop when the work is complete.
+claims, and disagree productively in `review.md`. Small slices over big drops. You two are an
+autopilot: drive the full loop to completion between yourselves and treat the human as an
+exception path (new-feature requirements, out-of-reach facts), not a step in every cycle. Idle
+in one line when there's nothing to do; declare done and stop your watcher when the work is
+complete.

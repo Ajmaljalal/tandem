@@ -17,7 +17,7 @@ role, and a partner. They read and write a shared set of files, hand work back a
 explicit asks, verify each other's claims against the real code, and only declare the work
 done after both sign off.
 
-Two rules are non-negotiable:
+Three rules are non-negotiable:
 
 - **Collaboration is mandatory. Neither agent works solo.** No agent agrees on the problem,
   picks a solution, writes the plan, or builds a slice on its own. Every step goes to the
@@ -29,6 +29,12 @@ Two rules are non-negotiable:
   task is active and never stops on its own. If it is ever interrupted or stopped, for example
   because you interrupt the agent, re-triggering the watcher is the first thing the agent does
   on its next turn, before any other work. See [The watcher](#the-watcher-is-the-collaboration-channel).
+- **It is an autopilot. "Agreed" means agreed between the two agents, not with you.** The pair
+  runs the whole loop — problem, solution, plan, build, review — on their own. Once both agents
+  agree on the problem, solution, and plan, they build it; they never stop to ask you "we have a
+  solution, should we implement it?". You are pulled in only for what they genuinely can't
+  settle themselves: requirements for a *new feature* (gathered while scoping the problem) and
+  facts or access beyond their reach.
 
 Today tandem is built for exactly two agents on one urgent problem at a time.
 
@@ -144,6 +150,12 @@ stays quiet or posts a single idle line.
   waiting on the partner.
 - It runs at exactly a 1-minute cadence. If the harness cannot create a 1-minute watcher, the
   agent stops and asks you rather than quietly using a slower one.
+- The one stall exception: if the partner makes no move after about 15 idle ticks (or never
+  joins), the watcher deliberately downgrades to a slower cadence — staying alive, never
+  stopping — and flags you that the partner may be absent, then returns to 1 minute the moment
+  the partner moves. This is different from the setup rule above: you may never *silently start*
+  slower, but you should slow a watcher that would otherwise poll for hours against an idle
+  tandem.
 - It never stops on its own while the task is active. The only time it stops is at final mutual
   sign-off, when the work is completely done.
 - If it is ever interrupted or stopped before that, for example because you interrupt the
@@ -175,26 +187,36 @@ Copy-paste stubs are in [`templates/`](templates/). A worked two-agent walkthrou
 
 ## The flow, in order
 
-No step is skipped, and no agent moves to the next step before both agents agree on the current
-one.
+No step is skipped, and no agent moves to the next step before **both agents** agree on the
+current one. Agreement is between the two agents — not a human go-ahead.
 
-1. **Agree on the problem.** Read `problem.md`, then inspect the real code to confirm the
-   stated problem is actually a problem. Record agreement in `decisions.md`.
+1. **Verify, then agree on the problem.** Read `problem.md` and inspect the real code. For a
+   bug, prove it's actually a bug before agreeing; if it isn't, say so and stop. For a new
+   feature, confirm it makes sense and gather the technical requirements from the human at this
+   stage. Record agreement in `decisions.md`.
 2. **Write the solution together** in `solution.md`. Trade feedback in `review.md` until both
-   agree.
+   agents agree.
 3. **Write the plan** in `plan.md`, sliced, with a clear split of who does what.
-4. **Build**, preferring one shared branch. Small slices, one reviewable commit each, with
-   typecheck and tests run before each commit.
-5. **Mutual review and sign-off** in `review.md` before declaring done.
+4. **Build automatically** once both agents agree — no human go-ahead needed. One shared branch
+   by default (per-repo branches for a multi-repo product). Small slices, one reviewable commit
+   each, with typecheck and tests run before each commit.
+5. **Mutual review and sign-off** in `review.md` before declaring done. Every slice is reviewed
+   by the partner; for high-risk or production fixes, run a final adversarial production-
+   readiness pass, then a closeout check (no open lanes, commits consistent, watchers handled),
+   before sign-off.
 
 ## Why it works
 
-Hard-won rules are baked in: collaborate on everything and never decide solo; keep the watcher
-alive as the one channel between agents; don't implement ahead of your partner's
-acknowledgment; only the tree-lock holder has uncommitted changes; never `git add -A`;
-independently verify the partner's claims against the real code; ship small committed slices;
-keep the live handoff tables current; idle in one line when there is nothing to do; and stop
-cleanly only after final sign-off.
+Hard-won rules are baked in: collaborate on everything and never decide solo; run as an
+autopilot that agrees agent-to-agent and only questions the human for new-feature requirements
+or out-of-reach facts; keep the watcher alive as the one channel between agents and restart it
+first if it ever stops; don't implement ahead of your partner's acknowledgment, but never
+idle-spin forever either — escalate once and slow the watcher if a partner stalls; only the
+tree-lock holder has uncommitted changes; never `git add -A`; independently verify the
+partner's claims against the real code; ship small committed slices each reviewed by the
+partner; keep the live handoff tables current and run a closeout consistency check before
+declaring done; idle in one line when there is nothing to do; and stop your own watcher cleanly
+only after final sign-off.
 
 ## Contributing
 

@@ -71,19 +71,27 @@ branch using the tree lock.
 
 ## Build and review
 
+Once Iris and Mika have agreed on the problem, solution, and plan, they start building
+**on their own** — they don't pause to ask the human "should we implement this?". (The only
+human question came earlier: while scoping the problem, if this had been a *new feature* rather
+than a bug, they'd have gathered requirements from the human before agreeing on scope.)
+
 Iris implements the first slice, commits it, releases the lock, and asks Mika to review
 specific failure cases. Mika reviews, approves, claims the lock, implements UX copy, commits,
-and asks Iris to review.
+and asks Iris to review. No slice is "done" until the partner has reviewed it.
 
 ## Completion
 
-Both agents record final verification in `status.md` and mutual sign-off in `review.md`.
-`handoff.md` ends with:
+Before declaring done, they run the closeout check: no Active Lane still open, every live row
+points at the same branch HEAD, each agent stops its **own** watcher (and if one can't stop the
+other's, it leaves a pending "@partner stop your watcher" line), and human follow-ups like merge
+are listed separately. Both agents record final verification in `status.md` and mutual sign-off
+in `review.md`. `handoff.md` ends with:
 
 ```markdown
 Current owner: Human / complete
 Tree/edit lock holder: FREE
 Current action: work complete; awaiting human merge/review
 Watcher (Iris): stopped after final sign-off
-Watcher (Mika): stopped after final sign-off
+Watcher (Mika): stopped after final sign-off (Iris left a pending note if it couldn't stop Mika's)
 ```

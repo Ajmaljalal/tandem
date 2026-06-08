@@ -14,8 +14,8 @@ On a reopened session, normalize these tables to reflect *now* before doing any 
 | [Agent A] state | [state] |
 | [Agent B] state | [state] |
 | Parallel mode | [yes/no + constraints] |
-| Watcher ([Agent A]) | [id + 1-minute cadence + ACTIVE until complete; restart first if stopped; if impossible, stop and ask human] |
-| Watcher ([Agent B]) | [id + 1-minute cadence + ACTIVE until complete; restart first if stopped; if impossible, stop and ask human] |
+| Watcher ([Agent A]) | [id + 1-min cadence + ACTIVE until complete; restart first if stopped; downgrade cadence + flag human if partner stalls; if 1-min impossible, stop and ask human] |
+| Watcher ([Agent B]) | [id + 1-min cadence + ACTIVE until complete; restart first if stopped; downgrade cadence + flag human if partner stalls; if 1-min impossible, stop and ask human] |
 | Last updated by | [agent name] |
 | Last updated at | [date/time/timezone] |
 
@@ -33,6 +33,14 @@ branch/worktree/repo — and still clears the agreement gate before that lane bu
 - The lock holder is the only agent allowed to have uncommitted changes.
 - Stage only owned files. Never use `git add -A` or `git commit -am`.
 - If parallel mode is enabled, each agent must list its exact file set here first.
+
+## Closeout Check (all must hold before declaring complete)
+
+- [ ] No Active Lane is still in-progress / "changes requested"
+- [ ] Every live row cites the same current branch HEAD (no two rows citing different commits)
+- [ ] Each agent's watcher state is accurate; each stopped its own (or logged a pending cleanup)
+- [ ] Human follow-ups (deploy / recovery / merge) listed separately from finished agent work
+- [ ] Final mutual sign-off posted in `review.md`
 
 ## Handoff Log
 
