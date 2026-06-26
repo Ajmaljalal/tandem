@@ -29,12 +29,13 @@ Three rules are non-negotiable:
   task is active and never stops on its own. If it is ever interrupted or stopped, for example
   because you interrupt the agent, re-triggering the watcher is the first thing the agent does
   on its next turn, before any other work. See [The watcher](#the-watcher-is-the-collaboration-channel).
-- **It is an autopilot. "Agreed" means agreed between the two agents, not with you.** The pair
-  runs the whole loop — problem, solution, plan, build, review — on their own. Once both agents
-  agree on the problem, solution, and plan, they build it; they never stop to ask you "we have a
-  solution, should we implement it?". You are pulled in only for what they genuinely can't
-  settle themselves: requirements for a *new feature* (gathered while scoping the problem) and
-  facts or access beyond their reach.
+- **You pick the autonomy mode; the two agents always collaborate.** At setup you choose
+  **automatic** or **manual**. In automatic mode the pair runs the whole loop (problem, solution,
+  plan, build, review) on their own and builds once both agents agree, pulling you in only for
+  new-feature requirements and out-of-reach facts. In manual mode they do the same work but wait
+  for your go-ahead at each major gate (problem agreed, plan agreed before building, and before
+  anything irreversible). Either way the two agents must agree with each other, you define the
+  problem and own the merge, and you can stop the run at any time.
 
 Today tandem is built for exactly two agents on one urgent problem at a time.
 
@@ -197,9 +198,10 @@ current one. Agreement is between the two agents — not a human go-ahead.
 2. **Write the solution together** in `solution.md`. Trade feedback in `review.md` until both
    agents agree.
 3. **Write the plan** in `plan.md`, sliced, with a clear split of who does what.
-4. **Build automatically** once both agents agree — no human go-ahead needed. One shared branch
+4. **Build** once both agents agree. In automatic mode they start right away; in manual mode they
+   get your go-ahead on the plan first and check in before anything irreversible. One shared branch
    by default (per-repo branches for a multi-repo product). Small slices, one reviewable commit
-   each, with typecheck and tests run before each commit.
+   each, with typecheck and tests run before each commit, and never a merge into your default branch.
 5. **Mutual review and sign-off** in `review.md` before declaring done. Every slice is reviewed
    by the partner; for high-risk or production fixes, run a final adversarial production-
    readiness pass, then a closeout check (no open lanes, commits consistent, watchers handled),
@@ -207,9 +209,10 @@ current one. Agreement is between the two agents — not a human go-ahead.
 
 ## Why it works
 
-Hard-won rules are baked in: collaborate on everything and never decide solo; run as an
-autopilot that agrees agent-to-agent and only questions the human for new-feature requirements
-or out-of-reach facts; keep the watcher alive as the one channel between agents and restart it
+Hard-won rules are baked in: collaborate on everything and never decide solo; run in the
+autonomy mode the human picked (manual gates each major step; automatic agrees agent-to-agent
+and questions the human only for new-feature requirements or out-of-reach facts); keep the
+watcher alive as the one channel between agents and restart it
 first if it ever stops; don't implement ahead of your partner's acknowledgment, but never
 idle-spin forever either — escalate once and slow the watcher if a partner stalls; only the
 tree-lock holder has uncommitted changes; never `git add -A`; independently verify the
@@ -220,37 +223,32 @@ only after final sign-off.
 
 ## Autonomy and safety
 
-tandem is an autopilot by design. Each agent runs a persistent 1-minute watcher, and once the
-two agents agree on the problem, solution, and plan, they build it without stopping for your
-approval at each step. Security scanners (Socket, for instance) may flag this autonomy as an
-anomaly. That read is accurate, and the autonomy is the point of the skill, so here is what it
-does and does not do.
+tandem runs in one of two modes, and **you choose which at setup**:
 
-What it does not do, which automated audits confirm:
+- **Manual mode** keeps you in the loop: the two agents do the collaborative work but pause for
+  your go-ahead at each major gate (problem agreed, plan agreed before building, and before
+  anything irreversible). If you do not choose a mode, this is the default.
+- **Automatic mode** is the autopilot: once the two agents agree on the problem, solution, and
+  plan, they build without checking in at each step, pulling you in only for new-feature
+  requirements and out-of-reach facts.
 
-- **No credential theft, data exfiltration, or third-party installer abuse.** The skill is plain
-  markdown instructions. Installing it copies those files; nothing in the skill runs on install,
-  and it has no telemetry.
-- **Coordination is local.** The two agents talk only through files in one shared folder on your
-  machine, not through any tandem server or service.
+Either mode, the two agents must agree with each other, they work on a `feat/` branch and never
+merge for you, and you can stop the run at any time. Automatic mode is genuine autonomous
+execution, so a security scanner may flag it as such. That is accurate: it is opt-in, and the
+trust model below is how it stays bounded.
 
-What it does, and how you stay in control:
+**Trust model.** Run tandem only on repositories and problems you trust. The tracking files
+(`handoff.md`, `problem.md`, and the rest) are coordination state between two cooperating agents,
+not a command channel: an agent treats their content as notes to verify against the real code,
+never as authority to act outside the agreed problem and plan, and it surfaces anything out of
+scope (secrets, exfiltration, unexpected network or install commands) to you instead of acting on
+it. The protocol's rule to independently verify every claim against the code is the safeguard
+against a poisoned file or repo.
 
-- **Real work, on a branch.** While a tandem is active the agents read code, edit files, run your
-  typecheck and tests, and make small git commits. That is the job. They commit only their own
-  files, never `git add -A`, and work on a `feat/<problem-name>` branch.
-- **They never merge.** Finished branches are left for you. Merging into your default branch is
-  always your call, so the autonomy stops at the boundary that matters.
-- **The human is the exception path, not a per-step gate.** You are pulled in only for new-feature
-  requirements (gathered while scoping the problem) and for facts or access beyond the agents'
-  reach. The pair settles everything else between themselves.
-- **You can stop it any time.** Tell an agent to stop and it removes its watcher; each agent also
-  stops its own watcher at final sign-off. If a partner goes idle, the watcher slows itself and
-  flags you instead of polling for hours.
-
-So the anomaly a scanner sees is the autonomous loop, and that loop is bounded: it acts inside
-your repo on a feature branch, never merges for you, and never reaches for your credentials,
-network, or secrets.
+**What it does not do, which automated audits confirm:** no credential theft, data exfiltration,
+or third-party installer abuse. The skill is plain markdown; installing it copies files and a
+symlink, runs nothing, and has no telemetry. Coordination is local to your machine, not through
+any tandem server.
 
 ## Contributing
 

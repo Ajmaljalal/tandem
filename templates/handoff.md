@@ -10,6 +10,7 @@ On a reopened session, normalize these tables to reflect *now* before doing any 
 | --- | --- |
 | Current owner | [Agent A / Agent B / Human / unassigned] |
 | Current action | [what is happening now] |
+| Autonomy mode | [automatic / manual; set by first mover with the human, see decisions.md] |
 | Tree/edit lock holder | [agent name / FREE] |
 | [Agent A] state | [state] |
 | [Agent B] state | [state] |
