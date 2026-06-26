@@ -58,13 +58,30 @@ Run these in order. Skip any step already satisfied by existing files.
 
 Before doing anything else, read `handoff.md` and `status.md`.
 
+**Then announce your arrival before anything else. This is your first write, ahead of any code
+reading, problem verification, or research.** The single most common way this skill fails is a
+joining agent that explores the codebase for many minutes while its partner sits waiting, never
+knowing anyone showed up. The moment you finish reading `handoff.md` you know which case below
+you are in, so act on it by writing your arrival *immediately*: claim your name, state that you
+have joined, say whether you are the first mover or a later joiner, and say what you will do
+next. Post it to **both** `handoff.md` (fill your `<name> state` row in Current Ownership **and**
+append a Handoff Log line) and your `status.md` section. Only after that arrival line is written
+do you read code, verify the problem, or touch anything else. Exploring first and announcing
+later is the exact failure to avoid.
+
 - **No `handoff.md` / work not started → you are the FIRST MOVER.** Create the tracking
-  files (§4; use `templates/` if bundled), claim your identity + the edit/tree lock,
-  **start the work immediately**, then **hand off** to your partner with explicit asks (§3).
-- **Files exist / your partner has started → you are JOINING.** *Immediately* add your
-  section to `status.md` and your row to `handoff.md` so your partner knows you're here and
-  can coordinate. Then act on the current handoff state — if it's your partner's turn or
-  they hold the lock, **wait / do read-only work**; don't edit shared code under them.
+  files (§4; use `templates/` if bundled) and claim your identity + the edit/tree lock.
+  **Your first Handoff Log line is your arrival announcement:** *"I am `<name>`, first mover.
+  No partner has joined yet. I am starting on `<what>`."* Then **start the work immediately**
+  and **hand off** to your partner with explicit asks (§3).
+- **Files exist / your partner has started → you are JOINING. Announce yourself first,
+  before any exploration.** Your first write is your arrival: fill your `<name> state` row in
+  `handoff.md`, append a Handoff Log line, and add your `status.md` section. For example:
+  *"I am `<name>`, joining. `<partner>` is already here and owns `<current action / lock>`.
+  I will stay idle and do only read-only work until they hand off to me."* Do this the instant
+  you finish reading `handoff.md`, not after you have explored the code. Then act on the current
+  handoff state: if it's your partner's turn or they hold the lock, **wait / do read-only
+  work**; don't edit shared code under them.
 - **Files exist from an old/reopened session → NORMALIZE FIRST.** Treat stale trackers as
   suspect until checked. Re-read `problem.md`, refresh the live ownership/lock/active-lane
   tables to reflect **now**, mark stale pointers as superseded instead of trusting them, and

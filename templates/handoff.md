@@ -44,4 +44,8 @@ branch/worktree/repo — and still clears the agreement gate before that lane bu
 
 ## Handoff Log
 
-- [date/time] [agent]: [handoff summary + explicit ask to partner]
+Append-only. **Each agent's first line here is its arrival announcement:** name, whether it is
+the first mover or a later joiner, and what it will do next, written the moment it finishes
+reading this file and before any code work, so the partner knows immediately that someone showed up.
+
+- [date/time] [agent]: [arrival announcement on join; thereafter handoff summary + explicit ask to partner]
