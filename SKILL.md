@@ -1,10 +1,14 @@
 ---
 name: tandem
+version: 1.0.0
 description: >
   Collaborate with a SECOND AI engineer (any LLM) on a software problem, coordinating only
-  through shared files — a handoff/status/review tracking system. Two named agents go
+  through shared files (a handoff/status/review tracking system). Two named agents go
   problem → agree → solution → plan → build (default one branch; per-repo lanes for multi-repo
-  products) with explicit, automatic back-and-forth handoffs.
+  products) with explicit, automatic back-and-forth handoffs. By design it runs as an autonomous
+  autopilot: each agent keeps a persistent watcher and, once both agents agree, they build
+  without per-step human approval, pulling in the human only for new-feature requirements and
+  out-of-reach facts; they work on a feature branch and never merge for you.
   Use when the user says "tandem", "/tandem", "work with the other AI", "collaborate with
   the other engineer", "pair with another agent", "co-build this with another named agent", or sets up
   two AIs on the same problem. Also use when joining a folder that already has a

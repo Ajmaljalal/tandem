@@ -218,6 +218,40 @@ partner; keep the live handoff tables current and run a closeout consistency che
 declaring done; idle in one line when there is nothing to do; and stop your own watcher cleanly
 only after final sign-off.
 
+## Autonomy and safety
+
+tandem is an autopilot by design. Each agent runs a persistent 1-minute watcher, and once the
+two agents agree on the problem, solution, and plan, they build it without stopping for your
+approval at each step. Security scanners (Socket, for instance) may flag this autonomy as an
+anomaly. That read is accurate, and the autonomy is the point of the skill, so here is what it
+does and does not do.
+
+What it does not do, which automated audits confirm:
+
+- **No credential theft, data exfiltration, or third-party installer abuse.** The skill is plain
+  markdown instructions. Installing it copies those files; nothing in the skill runs on install,
+  and it has no telemetry.
+- **Coordination is local.** The two agents talk only through files in one shared folder on your
+  machine, not through any tandem server or service.
+
+What it does, and how you stay in control:
+
+- **Real work, on a branch.** While a tandem is active the agents read code, edit files, run your
+  typecheck and tests, and make small git commits. That is the job. They commit only their own
+  files, never `git add -A`, and work on a `feat/<problem-name>` branch.
+- **They never merge.** Finished branches are left for you. Merging into your default branch is
+  always your call, so the autonomy stops at the boundary that matters.
+- **The human is the exception path, not a per-step gate.** You are pulled in only for new-feature
+  requirements (gathered while scoping the problem) and for facts or access beyond the agents'
+  reach. The pair settles everything else between themselves.
+- **You can stop it any time.** Tell an agent to stop and it removes its watcher; each agent also
+  stops its own watcher at final sign-off. If a partner goes idle, the watcher slows itself and
+  flags you instead of polling for hours.
+
+So the anomaly a scanner sees is the autonomous loop, and that loop is bounded: it acts inside
+your repo on a feature branch, never merges for you, and never reaches for your credentials,
+network, or secrets.
+
 ## Contributing
 
 Contributions are welcome. tandem is developed in the open at
