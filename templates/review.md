@@ -22,6 +22,12 @@ Findings:
 
 - [severity] [file:line] [finding]
 
+Formal review:
+
+- `/review` Standards findings: [summary or none]
+- `/review` Spec findings: [summary or none]
+- Quality bar: [thermo-nuclear + improve-codebase-architecture checks: structural simplification, spaghetti, module depth/locality/leverage, file size, type/boundary cleanliness]
+
 Questions:
 
 - [question or none]

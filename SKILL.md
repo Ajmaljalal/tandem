@@ -1,6 +1,6 @@
 ---
 name: tandem
-version: 1.1.0
+version: 1.1.1
 description: >
   Use this when you want two agents (any LLM) to collaborate on a software problem, coordinating only
   through shared files (a handoff/status/review tracking system). Two named agents go
@@ -51,6 +51,18 @@ agent-to-agent review and the code-verification rule are the checks. The agents 
 `feat/<problem-name>` branch and **never merge** (the human owns the merge), and the human can
 stop the run at any time.
 
+**Skill selection and quality bar.** At the start of every tandem task, use `$find-skills` (the
+`find-skills` skill) to identify the best additional skill or skills needed to complete the
+task. Record the selected skills, skipped candidates, and why in `decisions.md`; both agents
+must agree before solution design. For review work, use the `/review` skill as the formal
+review process and copy or summarize its findings in `review.md` with file/line citations. For
+all coding, design, and peer review, apply the standards from
+`/thermo-nuclear-code-quality-review` and `/improve-codebase-architecture`: look for structural
+simplification, avoid spaghetti growth and thin abstractions, keep logic in the canonical layer,
+guard file size, prefer deep modules with useful interfaces, and preserve locality and leverage.
+Do not rubber-stamp working code that makes the module structure worse; ask for the cleaner
+decomposition before sign-off.
+
 ## 0. Setup handshake (only the parts not already done)
 
 Run these in order. Skip any step already satisfied by existing files.
@@ -68,14 +80,21 @@ Run these in order. Skip any step already satisfied by existing files.
    cannot operate without it. Only after it exists do you create any other file. All tracking
    files (§4) live in this one folder; **code changes never go here** — they go in the repo's
    normal source tree on a `feat/<problem-name>` branch (§2).
-3. **Settle coding practices.** Ask the human if there's a coding-practices/context file to
+3. **Select supporting skills.** Use `$find-skills` to search for the best skill or skills for
+   the task domain (for example review, testing, UI, deployment, data fetching, migration, or
+   debugging). If a skill clearly applies, use it alongside tandem and record the choice in
+   `decisions.md`; if no useful skill exists, record that result and proceed with the best
+   general approach. For review tasks, this selection must include `/review`.
+4. **Settle coding practices.** Ask the human if there's a coding-practices/context file to
    follow. Resolve in this order: (a) the path the human gives → (b) the shared `docs/`
    folder → (c) repo convention files (`CLAUDE.md`, `AGENTS.md`, `.cursor/rules`, `.github`)
    in the relevant repos → (d) infer from the codebase's existing conventions. Record what
-   you'll follow in `decisions.md`; both agents must agree. This is not skippable just
-   because tracking files already exist: before implementation, verify `decisions.md` has
-   a current coding-practices decision.
-4. **Settle the autonomy mode (first mover asks the human).** In one short exchange, ask:
+   you'll follow in `decisions.md`; both agents must agree. Always include the coding standards
+   from `/thermo-nuclear-code-quality-review` and `/improve-codebase-architecture` in this
+   decision, even when the repo has its own conventions. This is not skippable just because
+   tracking files already exist: before implementation, verify `decisions.md` has a current
+   coding-practices decision.
+5. **Settle the autonomy mode (first mover asks the human).** In one short exchange, ask:
    *"Automatic or manual mode? Automatic: once the two of us agree on the problem, solution, and
    plan, we build without checking in at each step. Manual: we do the same work but pause for
    your go-ahead at each major gate (problem agreed, plan agreed before building, and before
@@ -148,30 +167,49 @@ at any time.
      Record the answers in `decisions.md`.
    Either way, independently verify your partner's claims against the code — don't rubber-stamp.
    Record problem agreement in `decisions.md`.
-2. **Write the SOLUTION together first** (`solution.md`). Trade feedback in `review.md` and
+2. **Confirm task skills before designing.** Re-run or revisit the `$find-skills` result now
+   that the problem is understood. Agree with your partner on the exact helper skills to apply,
+   record them in `decisions.md`, and follow their instructions during the relevant phases.
+   Review tasks must use `/review`; coding tasks must be held to
+   `/thermo-nuclear-code-quality-review` and `/improve-codebase-architecture` standards.
+3. **Write the SOLUTION together first** (`solution.md`). Trade feedback in `review.md` and
    reach explicit agreement *with your partner* before planning — an agent-to-agent agreement,
-   not something to route past the human.
-3. **Then write the PLAN** (`plan.md`) — phased/sliced, with a clear split of who does what.
-4. **Then BUILD.** In automatic mode, start building as soon as both agents agree on the plan;
+   not something to route past the human. The solution must call out the intended module shape,
+   canonical ownership layer, and any simplification/decomposition needed to avoid shallow
+   modules or scattered special cases.
+4. **Then write the PLAN** (`plan.md`) — phased/sliced, with a clear split of who does what.
+   Each slice should include its verification command and the quality risks to check: structural
+   simplification, file-size growth, spaghetti branching, type/boundary cleanliness, canonical
+   helper reuse, locality, and leverage.
+5. **Then BUILD.** In automatic mode, start building as soon as both agents agree on the plan;
    in manual mode, get the human's go-ahead on the agreed plan first and check in before anything
    irreversible. Default to **ONE shared branch** off the repo's default branch. For a multi-repo
    product (e.g. separate `server/` and `client/` repos) or genuinely conflicting work, per-repo /
    per-lane branches are a sanctioned default: record the lane split, owner, and exact file set in
    `decisions.md` before the first edit. Implement in small slices: one reviewable commit per
    slice, never batch multiple slices into one commit, and run typecheck/tests before each slice
-   commit. Never merge into the default branch; leave finished branches for the human.
-5. **Mutual review & sign-off** in `review.md` before declaring done. Every slice is reviewed
-   by the partner — an author never self-certifies their own slice as done. Cite `file:line`.
+   commit. During implementation, prefer direct maintainable code, delete incidental complexity
+   when a clear code-judo move exists, avoid ad-hoc branches in busy flows, keep feature logic in
+   the canonical module, and decompose before a file crosses 1000 lines without a strong reason.
+   Never merge into the default branch; leave finished branches for the human.
+6. **Mutual review & sign-off** in `review.md` before declaring done. Every slice is reviewed
+   by the partner — an author never self-certifies their own slice as done. Use `/review` for the
+   formal review pass, then record its Standards and Spec findings in `review.md`. Cite
+   `file:line`, and additionally check the `/thermo-nuclear-code-quality-review` and
+   `/improve-codebase-architecture` bars: no structural regression, no obvious missed
+   simplification, no unjustified file-size explosion, no spaghetti special-casing, no thin or
+   magical abstraction, no unclear type boundary, and no shallow module where a deeper module
+   would improve locality and leverage.
    When a slice touches **auth, ownership, project/user lookup, or any HTTP guard**, the
    reviewer explicitly checks owner-scoping and error-code behavior (e.g. a status code that
    leaks another user's resource state, like a cross-user 409/403).
-6. **Production-readiness reopen (high-risk / production fixes).** For prod-facing or
+7. **Production-readiness reopen (high-risk / production fixes).** For prod-facing or
    high-blast-radius changes, after the first "done" run one explicit adversarial pass before
    final sign-off: concurrency/idempotency, ownership/auth scoping, invariant bypasses,
    error-recovery commands, and analogous state classes the fix didn't touch. Reopening a
    "complete" branch to harden it is expected, not a failure — log findings as new slices and
    review them like any other.
-7. **Closeout consistency check (before declaring complete).** Don't declare done until all of
+8. **Closeout consistency check (before declaring complete).** Don't declare done until all of
    these hold, and record the check in `handoff.md`: no Active Lane is still in-progress or
    "changes requested"; every live row cites the *same* current branch HEAD (no two rows
    pointing at different commits); each agent's watcher state is accurate and each agent has

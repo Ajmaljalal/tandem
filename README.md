@@ -17,6 +17,10 @@ role, and a partner. They read and write a shared set of files, hand work back a
 explicit asks, verify each other's claims against the real code, and only declare the work
 done after both sign off.
 
+At setup the pair also uses `$find-skills` to pick the best supporting skills for the task.
+Reviews use `/review` as the formal review process, and coding/design/review work is held to
+the `/thermo-nuclear-code-quality-review` and `/improve-codebase-architecture` quality bar.
+
 Three rules are non-negotiable:
 
 - **Collaboration is mandatory. Neither agent works solo.** No agent agrees on the problem,
@@ -195,17 +199,22 @@ current one. Agreement is between the two agents — not a human go-ahead.
    bug, prove it's actually a bug before agreeing; if it isn't, say so and stop. For a new
    feature, confirm it makes sense and gather the technical requirements from the human at this
    stage. Record agreement in `decisions.md`.
-2. **Write the solution together** in `solution.md`. Trade feedback in `review.md` until both
+2. **Select task skills.** Use `$find-skills` to identify the best helper skills, record the
+   selected and skipped candidates in `decisions.md`, and require `/review` for review tasks.
+3. **Write the solution together** in `solution.md`. Trade feedback in `review.md` until both
    agents agree.
-3. **Write the plan** in `plan.md`, sliced, with a clear split of who does what.
-4. **Build** once both agents agree. In automatic mode they start right away; in manual mode they
+4. **Write the plan** in `plan.md`, sliced, with a clear split of who does what.
+5. **Build** once both agents agree. In automatic mode they start right away; in manual mode they
    get your go-ahead on the plan first and check in before anything irreversible. One shared branch
    by default (per-repo branches for a multi-repo product). Small slices, one reviewable commit
-   each, with typecheck and tests run before each commit, and never a merge into your default branch.
-5. **Mutual review and sign-off** in `review.md` before declaring done. Every slice is reviewed
-   by the partner; for high-risk or production fixes, run a final adversarial production-
-   readiness pass, then a closeout check (no open lanes, commits consistent, watchers handled),
-   before sign-off.
+   each, with typecheck and tests run before each commit, and never a merge into your default
+   branch. Implementation should satisfy the thermo-nuclear and improve-codebase-architecture
+   standards: structural simplification, clear module depth, locality, leverage, and no
+   avoidable spaghetti growth.
+6. **Mutual review and sign-off** in `review.md` before declaring done. Every slice is reviewed
+   by the partner using `/review`, with Standards and Spec findings recorded; for high-risk or
+   production fixes, run a final adversarial production-readiness pass, then a closeout check
+   (no open lanes, commits consistent, watchers handled), before sign-off.
 
 ## Why it works
 
